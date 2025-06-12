@@ -1,0 +1,41 @@
+.container{
+        background-color: rgb(31 41 55)
+}
+.innercontainer{
+    max-width: 1300px;
+    margin: 0 auto;
+    color: white;
+    padding-top: 5em;
+    padding-bottom: 3em;
+    
+}
+.flexcontainer{
+    display: flex;
+    gap: 5em;
+    padding-bottom: 2em;
+    border-bottom: 1px solid white;
+}
+.footertext{
+  
+    font-weight: 400;
+    color: #f3f4f6ba; /* Gray-200 */
+    max-width: 700px;
+  
+}
+.flexitem{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+.footercolumn{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+   
+}
+.copyright{
+    text-align: center;
+    padding-top: 2em;
+    color: #f3f4f6ba; /* Gray-200 */
+}
