@@ -1,0 +1,63 @@
+
+.container{
+    padding: 15rem;
+    background-color: rgb(245, 245, 255);
+    height: 100vh;
+}
+
+.logincard{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    border: 1px solid #e5e7eb; /* Gray-300 */
+    padding: 1em;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.loginheading{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937; /* Gray-800 */
+    margin-bottom: 10px;
+}
+.loginsub{
+    font-size: 1rem;
+    color: #6b7280; /* Gray-500 */
+    margin-bottom: 2rem;
+
+}
+.userinput{
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db; /* Gray-300 */
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+.passinput{
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db; /* Gray-300 */
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+.loginbtn{
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563eb; /* Blue-600 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.donthave{
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #6b7280; /* Gray-500 */
+    display: flex;
+
+}
