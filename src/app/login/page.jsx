@@ -1,25 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from "../../styles/LoginPage.module.css";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { AuthContext } from "@/util/AuthProvider";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter()
+  const {user,login} = useContext(AuthContext)
 
+  
   const handleLogin = async () => {
-    try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
-        email,
-        password,
-      }, { withCredentials: true });
-
-      console.log("Login successful", res.data);
-      // Redirect or update auth state here
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Login failed. Please try again.");
-    }
+    login(email,password)
   };
 
   return (
