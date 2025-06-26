@@ -3,6 +3,7 @@ import { useState } from "react";
 import styles from "../../styles/SignUpPage.module.css";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const SignupPage = () => {
   const [fname, setFname] = useState("");
@@ -11,7 +12,7 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("student");
-
+  const router = useRouter()
   const handleSignup = () => {
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
@@ -39,13 +40,29 @@ const SignupPage = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("Signup successful:", data);
+      console.log("Signup successful:", data.user);
+      const user = data.user;
+      alert("Signup successful! Welcome aboard!");
+      if(user.role == "tutor"){
+        console.log("user is logged in as tutor")
+         router.push("/dashboard/tutor")
+      }
+      else if (user.role == "student"){
+        router.push("/dashboard/student")
+      }
+         
       // Optionally redirect
     },
     onError: (error) => {
+      //check if error code is 409
+      if (error.response && error.response.status === 409) {
+        alert("Email already exists. Please use a different email.");
+        return;
+      }
       console.error("Signup failed:", error);
       alert("Signup failed. Please try again.");
     },
+    
   });
 
   return (

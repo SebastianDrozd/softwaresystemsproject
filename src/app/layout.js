@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import {  QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import QueryProvider from "@/util/QueryProvider";
+import AuthProvider from "@/util/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +24,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <AuthProvider>
         <QueryProvider>
           <Navbar />
           {children}
        </QueryProvider>
+       </AuthProvider>
       </body>
     </html>
   );
