@@ -1,0 +1,280 @@
+/* Main Dashboard Container */
+.dashboardContainer {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f0fdf4, #eef2ff);
+  padding: 2rem;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.statContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statTitle {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #111827;
+}
+
+.positiveChange {
+  font-size: 0.875rem;
+  color: #059669;
+}
+
+.negativeChange {
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+.statIconBox {
+  background: linear-gradient(to right, #16a34a, #2563eb);
+  padding: 0.75rem;
+  border-radius: 9999px;
+}
+
+.statIcon {
+  color: white;
+  width: 24px;
+  height: 24px;
+}
+
+/* Layout Grid */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.sessionsColumn {}
+.sidebarColumn {}
+
+/* Card Styles */
+.card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cardHeader {
+  padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.cardDescription {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.cardBody {
+  padding: 1.5rem;
+}
+
+.cardFooter {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Sessions */
+.sessionItem {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+}
+
+.sessionInfo {
+  flex: 1;
+}
+
+.sessionHeader {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.sessionIconBox {
+  background-color: #bfdbfe;
+  padding: 0.5rem;
+  border-radius: 9999px;
+}
+
+.sessionIcon {
+  color: #2563eb;
+  width: 16px;
+  height: 16px;
+}
+
+.sessionName {
+  font-weight: 600;
+  color: #111827;
+}
+
+.sessionSubject {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.sessionMeta {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.metaIcon {
+  width: 12px;
+  height: 12px;
+  color: #6b7280;
+}
+
+.sessionActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.outlineButton {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.buttonIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Messages */
+.messageItem {
+  position: relative;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.messageName {
+  font-weight: 600;
+  color: #111827;
+}
+
+.messageTime {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.messageText {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-top: 0.25rem;
+}
+
+.unreadDot {
+  width: 10px;
+  height: 10px;
+  background-color: #10b981;
+  border-radius: 50%;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+/* Profile Summary */
+.profileItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #4b5563;
+}
+
+.profileIcon {
+  color: #2563eb;
+  width: 16px;
+  height: 16px;
+}
+
+.subjectsLabel {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.subjectsList {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.subjectBadge {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
