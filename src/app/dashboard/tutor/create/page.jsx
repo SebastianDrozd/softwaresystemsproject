@@ -3,8 +3,9 @@ import React, { useContext, useState } from 'react';
 
 import styles from '../../../../styles/CreateTutoringPost.module.css';
 import { AuthContext } from '@/util/AuthProvider';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createTutorPost } from '@/api/TutorPosts';
+import { getAllSubjects } from '@/api/Subjects';
 
 const subjectOptions = [
   'Mathematics', 'Physics', 'Chemistry', 'Biology', 'English Literature',
@@ -28,6 +29,13 @@ const CreateTutoringPost = () => {
     qualifications: '',
     profileImage: null
   });
+
+  const {
+    data : subjects
+  } = useQuery({
+    queryKey: ['subjects'],
+    queryFn : () => getAllSubjects()},
+  )
 
   const [errors, setErrors] = useState({});
 
@@ -79,7 +87,7 @@ const handleAvailabilityChange = (index, field, value) => {
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.hourlyRate) newErrors.hourlyRate = 'Hourly rate is required';
     if (formData.availability.length==0) newErrors.availability = 'Availability is required';
-    if (formData.subjects.some(s => !s.trim())) newErrors.subjects = 'All subjects must be selected';
+  //  if (formData.subjects.some(s => !s.trim())) newErrors.subjects = 'All subjects must be selected';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -143,8 +151,8 @@ const handleAvailabilityChange = (index, field, value) => {
               onChange={(e) => handleSubjectChange(index, e.target.value)}
             >
               <option value="">Select a subject</option>
-              {subjectOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
+              {subjects && subjects.map((option) => (
+                <option key={option.SubjectId} value={option.SubjectName}>{option.SubjectName}</option>
               ))}
             </select>
             {formData.subjects.length > 1 && (
