@@ -1,0 +1,20 @@
+'use client'
+ 
+import { getTutorPostById } from '@/api/TutorPosts'
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
+const TutorPost = () => {
+  const params = useParams()
+  const {id} = params
+
+  const {data : post, isLoading,isError} = useQuery({
+    queryKey: ['post',id],
+    queryFn : () => getTutorPostById(id),
+    enabled : !!id
+  })
+  console.log(post)
+  return (<h1>Hello</h1>)
+}
+
+
+export default TutorPost;

@@ -149,7 +149,7 @@ const Services = () => {
                             </div>
 
                             <div className={styles.cardFooter}>
-                                <a href={`/tutor/${service.id}`} className={styles.linkBtn}>View Profile</a>
+                                <a href={`/postings/${service.post_id}`} className={styles.linkBtn}>View Profile</a>
                                 <a href={`/booking?tutor=${service.id}`} className={styles.bookBtn}><Calendar size={14} /> Book</a>
                                 <button className={styles.messageBtn}><MessageCircle size={14} /> Message</button>
                             </div>
