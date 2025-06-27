@@ -97,10 +97,10 @@ const handleAvailabilityChange = (index, field, value) => {
     mutationFn : (data) =>  createTutorPost(data),
     onSuccess : () => {
         alert("Post Created!")
-        router.replace("/dashboard/tutor/create/success")
+       router.replace("/dashboard/tutor/create/success")
     },
     onError : (err) => {
-        console.log(err)
+        alert("There was error creating the post")
     }
 
   })

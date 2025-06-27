@@ -3,6 +3,7 @@ import { useContext } from "react";
 import styles from "../styles/Navbar.module.css"
 import { AuthContext } from "@/util/AuthProvider";
 import { useRouter } from "next/navigation";
+import { BookOpen } from "lucide-react";
 const Navbar = () => {
     const {user,logout} = useContext(AuthContext)
     const router = useRouter()
@@ -28,6 +29,7 @@ const Navbar = () => {
     return (
         <div className={styles.container}>
             <div className={styles.logocontainer}>
+               <BookOpen size={24} />
                 <h2 onClick={handleGoToMainPage}>BridgeLearn</h2>
             </div>
             <div className={styles.linkcontainer}>

@@ -9,6 +9,12 @@
     border-color: rgb(219 234 254 ) ;
     border-bottom-width: 1px;
 }
+.logocontainer{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
 .navlinks{
     list-style: none;
     display: flex;
