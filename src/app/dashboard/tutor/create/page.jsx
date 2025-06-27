@@ -6,6 +6,7 @@ import { AuthContext } from '@/util/AuthProvider';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createTutorPost } from '@/api/TutorPosts';
 import { getAllSubjects } from '@/api/Subjects';
+import { useRouter } from 'next/navigation';
 
 const subjectOptions = [
   'Mathematics', 'Physics', 'Chemistry', 'Biology', 'English Literature',
@@ -18,6 +19,7 @@ const daysOfWeek = [
 
 const CreateTutoringPost = () => {
     const {user} = useContext(AuthContext)
+    const router = useRouter()
    const [formData, setFormData] = useState({
     tutor : user?.id,
     title: '',
@@ -95,6 +97,7 @@ const handleAvailabilityChange = (index, field, value) => {
     mutationFn : (data) =>  createTutorPost(data),
     onSuccess : () => {
         alert("Post Created!")
+        router.replace("/dashboard/tutor/create/success")
     },
     onError : (err) => {
         console.log(err)
