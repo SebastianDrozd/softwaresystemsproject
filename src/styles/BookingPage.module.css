@@ -1,0 +1,214 @@
+/* BookingPage.module.css */
+
+.container {
+  padding: 2rem;
+  font-family: sans-serif;
+  background-color: #f8f9fc;
+}
+
+.backLink {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  color: #1e293b;
+  text-align: center;
+}
+
+.subtitle {
+  color: #64748b;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items : stretch
+}
+
+.leftPanel {
+  flex: 1;
+  min-width: 300px;
+ 
+}
+
+.rightPanel {
+  flex: 2;
+  min-width: 300px;
+}
+
+.tutorCard {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.avatar {
+  background: #dbeafe;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.tutorInfo h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.specialist {
+  color: #3b82f6;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.ratingRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.rating {
+  color: #f59e0b;
+}
+
+.rate {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.tags span {
+  background: #e2e8f0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+
+.responseTime {
+  background: #ecfdf5;
+  color: #10b981;
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.message,
+.call {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.message {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.call {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.scheduleBox {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.scheduleBox h2 {
+  margin-top: 0;
+}
+
+.helpTypes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.helpTypes button {
+  padding: 0.75rem;
+  background-color: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: left;
+}
+
+.dateTimeRow {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.dateTimeRow select {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.studentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.studentInfo input {
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.notes {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin: 1rem 0;
+}
+
+.bookButton {
+  background: linear-gradient(to right, #6366f1, #9333ea);
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+}
+.active{
+  border: 1px solid green !important;
+  
+}

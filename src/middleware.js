@@ -8,6 +8,7 @@ export function middleware(request) {
     
     if(url.pathname.startsWith("/dashboard")){
              const token = request.cookies.get("token")
+             console.log("this is token",token)
              if(!token){
                 return NextResponse.redirect(new URL('/login',request.url))
              }

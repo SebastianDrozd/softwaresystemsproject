@@ -1,5 +1,13 @@
+"use client"
+import { useRouter } from "next/navigation";
 import styles from "../styles/Hero.module.css";
 const Hero = () => {
+  const router = useRouter()
+
+  const handleViewPostings = () => {
+    router.push("/postings")
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.innercontainer}>
@@ -11,7 +19,7 @@ const Hero = () => {
           work for your family's budget.
         </h5>
         <div className={styles.buttondiv}>
-          <button className={styles.browsebutton}>Browse Tutors</button>
+          <button onClick={handleViewPostings} className={styles.browsebutton}>Browse Tutors</button>
           <button className={styles.consultationbutton}>
             Free Consultation
           </button>

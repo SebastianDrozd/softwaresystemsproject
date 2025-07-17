@@ -120,11 +120,11 @@ const Services = () => {
                 <h2 className={styles.resultsTitle}></h2>
                 <div className={styles.tutorGrid}>
                     {posts && posts.map(service => (
-                        <div key={service.id} className={styles.card}>
+                        <div key={service.post_id} className={styles.card}>
                             <div className={styles.cardHeader}>
                                 <Image
                                     src="https://i.ibb.co/7d8WN4Rh/premium-photo-1689568126014-06fea9d5d341.jpg"
-                                    alt={service.tutorName}
+                                    alt={"image"}
                                     className={styles.avatar}
                                     width={80}
                                     height={80}
@@ -149,7 +149,7 @@ const Services = () => {
                             </div>
 
                             <div className={styles.cardFooter}>
-                                <a href={`/postings/${service.post_id}`} className={styles.linkBtn}>View Profile</a>
+                                <a href={`/postings/${service.post_id}`} className={styles.linkBtn}>View Post</a>
                                 <a href={`/booking?tutor=${service.id}`} className={styles.bookBtn}><Calendar size={14} /> Book</a>
                                 <button className={styles.messageBtn}><MessageCircle size={14} /> Message</button>
                             </div>

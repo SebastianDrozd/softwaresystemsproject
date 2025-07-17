@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { getTutorPostById } from '@/api/TutorPosts'
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import styles from '../../../styles/TutorPost.module.css';
 import {
   Star, MapPin, Clock, Calendar, MessageCircle, Phone, Award,
@@ -13,6 +13,7 @@ import {
 
 const TutorPost = () => {
  // const { id } = useParams();
+ const router = useRouter();
   const [selectedTime, setSelectedTime] = useState('');
   const params = useParams()
   const {id} = params
@@ -22,6 +23,9 @@ const TutorPost = () => {
     queryFn : () => getTutorPostById(id),
     enabled : !!id
   })
+  const handleGoToBooking = () => {
+    router.push(`/postings/${id}/booking`)
+  }
   const tutor = {
     id: 1,
     name: "Sarah Johnson",
@@ -146,9 +150,9 @@ const TutorPost = () => {
           <div className={styles.rightColumn}>
             <div className={styles.cardSticky}>
               <div className={styles.price}>${tutor.price} <span>/hour</span></div>
-              <a to={`/booking?tutor=${tutor.id}`} className={styles.bookBtn}>
+              <button onClick={handleGoToBooking} className={styles.bookBtn}>
                 <Calendar size={16} /> Book Session
-              </a>
+              </button>
               <div className={styles.actions}>
                 <button className={styles.outlineBtn}><MessageCircle size={14} /> Message</button>
                 <button className={styles.outlineBtn}><Phone size={14} /> Call</button>
