@@ -1,15 +1,19 @@
-// pages/postings/[id]/booking.jsx
+
 "use client";
 
-import styles from "../../../../styles/BookingPage.module.css";
 import { useParams, useRouter } from "next/navigation";
 import { getTutorPostById } from "@/api/TutorPosts";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useContext, useEffect, useState } from "react";
 import { generateUpcomingSlots } from "@/util/availability";
+import { createBooking } from "@/api/Booking";
+import { AuthContext } from "@/util/AuthProvider";
+import styles from "../../../../styles/BookingPage.module.css";
+import { ArrowLeft, MessageCircle, Phone, Calendar, Clock, MapPin } from "lucide-react";
 
 export default function BookingPage() {
   const [activeButton, setActiveButton] = useState("Homework Help");
+  const { user } = useContext(AuthContext);
   const router = useRouter();
   const params = useParams();
   const { id } = params;
@@ -19,6 +23,7 @@ export default function BookingPage() {
   const [studentName, setStudentName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
   const [notes, setNotes] = useState("");
+  
   const {
     data: post,
     isLoading,
@@ -35,179 +40,239 @@ export default function BookingPage() {
       setAvailableSlots(slots);
     }
   }, [post]);
-const handleBooking = async () => {
-  const bookingData = {
-    tutorId: post?.user_id,
-    postId: post?.post_id,
-    studentName,
-    studentEmail,
-    helpType: activeButton,
-    date: selectedDate,
-    time: selectedTime,
-    notes,
+
+  const handleBooking = async () => {
+    if (!selectedDate || !selectedTime || !studentName || !studentEmail) {
+      alert("Please fill out all required fields.");
+      return;
+    }
+
+    const [startTime, endTime] = selectedTime.split("-");
+    
+    const bookingData = {
+      TutorId: post?.user_id,
+      StudentId: user?.id,
+      PostId: post?.post_id,
+      StudentName: studentName,
+      StudentEmail: studentEmail,
+      HelpType: activeButton,
+      SessionDate: selectedDate,
+      StartTime: startTime,
+      EndTime: endTime,
+      Notes: notes,
+      Status: "Pending"
+    };
+
+    createBookingMutation.mutate(bookingData);
   };
 
-  console.log("Submitting booking:", bookingData);
-  // await axios.post("/api/bookings", bookingData)
-};
+  const createBookingMutation = useMutation({
+    mutationFn: (data) => createBooking(data),
+    onSuccess: () => {
+      alert("Booking Completed!");
+    },
+    onError: (err) => {
+      alert("There was an error creating the booking");
+    }
+  });
 
+  if (isLoading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p className={styles.loadingText}>Loading tutor details...</p>
+      </div>
+    );
+  }
 
-  console.log(post);
+  if (isError) {
+    return (
+      <div className={styles.errorContainer}>
+        <h2>Unable to load tutor details</h2>
+        <p>Please try again later or contact support if the problem persists.</p>
+        <a onClick={() => {router.back()}} className={styles.backButton}>
+          <ArrowLeft size={16} /> Back to Post
+        </a>
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.container}>
-      <a href="/services" className={styles.backLink}>
-        ← Back to Services
-      </a>
-      <h1 className={styles.title}>Book Your Learning Session</h1>
-      <p className={styles.subtitle}>
-        Connect with expert tutors and accelerate your academic journey
-      </p>
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <a onClick={() => {router.back()}} className={styles.backButton}>
+          <ArrowLeft size={16} /> Back To View Post
+        </a>
+        
+        <div className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>Book Your Learning Session</h1>
+          <p className={styles.pageSubtitle}>
+            Connect with expert tutors and accelerate your academic journey
+          </p>
+        </div>
 
-      <div className={styles.grid}>
-        <div className={styles.leftPanel}>
-          <div className={styles.tutorCard}>
-            <div className={styles.avatar}></div>
-            <div className={styles.tutorInfo}>
-              <h2>{post?.FirstName}</h2>
-
-              <div className={styles.ratingRow}>
-                <span className={styles.rating}>4.9 (47)</span>
-                <span className={styles.rate}>${post?.HourlyRate}/hour</span>
+        <div className={styles.contentGrid}>
+          <div className={styles.leftColumn}>
+            <div className={styles.card}>
+              <div className={styles.tutorHeader}>
+                <div className={styles.avatarContainer}>
+                  <div className={styles.avatar}></div>
+                </div>
+                <div className={styles.tutorInfo}>
+                  <h2 className={styles.tutorName}>{post?.FirstName} {post?.LastName}</h2>
+                  <p className={styles.tutorTitle}>{post?.PostTitle}</p>
+                  
+                  <div className={styles.ratingContainer}>
+                    <div className={styles.rating}>
+                      <span className={styles.starIcon}>★</span>
+                      <span className={styles.ratingValue}>4.9</span>
+                      <span className={styles.reviewCount}>(47 reviews)</span>
+                    </div>
+                    <div className={styles.priceTag}>${post?.HourlyRate}/hour</div>
+                  </div>
+                </div>
               </div>
-              <p>{post?.PostDescription}</p>
+              
+              <p className={styles.description}>{post?.PostDescription}</p>
+              
+              <div className={styles.quickInfo}>
+                <div className={styles.infoItem}>
+                  <MapPin size={16} className={styles.infoIcon} />
+                  <span>Downtown Library</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <Clock size={16} className={styles.infoIcon} />
+                  <span>Usually responds within 2 hours</span>
+                </div>
+              </div>
+              
               <div className={styles.stats}>
-                <div>
+                <div className={styles.statItem}>
                   <strong>156</strong>
-                  <p>Students Taught</p>
+                  <span>Students Taught</span>
                 </div>
-                <div>
+                <div className={styles.statItem}>
                   <strong>98%</strong>
-                  <p>Success Rate</p>
+                  <span>Success Rate</span>
+                </div>
+                <div className={styles.statItem}>
+                  <strong>{post?.Experience}</strong>
+                  <span>Experience</span>
                 </div>
               </div>
-              <p>📍 Downtown Library</p>
-              <p>🎓{post?.Experience}</p>
-              <div className={styles.tags}>
-                {post?.subjects.split("||").map((subject, index) => (
-                  <span key={index}>{subject}</span>
+              
+              <div className={styles.subjectTags}>
+                {post?.subjects?.split("||").map((subject, index) => (
+                  <span key={index} className={styles.subjectTag}>{subject}</span>
                 ))}
               </div>
-              <div className={styles.responseTime}>
-                Usually responds within 2 hours
-              </div>
-              <div className={styles.actionButtons}>
-                <button className={styles.message}>Message</button>
-                <button className={styles.call}>Call</button>
+              
+              <div className={styles.contactActions}>
+                <button className={styles.contactButton}>
+                  <MessageCircle size={16} /> Message
+                </button>
+                <button className={styles.contactButton}>
+                  <Phone size={16} /> Call
+                </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className={styles.rightPanel}>
-          <div className={styles.scheduleBox}>
-            <h2>Schedule Your Session</h2>
-            <p>
-              Book a personalized tutoring session with{" "}
-              {post?.FirstName + " " + post?.LastName} at Downtown Library
-            </p>
+          <div className={styles.rightColumn}>
+            <div className={styles.sidebarCard}>
+              <h2 className={styles.sectionTitle}>Schedule Your Session</h2>
+              <p className={styles.subsectionContent}>
+                Book a personalized tutoring session with {post?.FirstName} at your preferred time
+              </p>
 
-            <div className={styles.helpTypes}>
-              <button
-                onClick={() => {
-                  setActiveButton("Homework Help");
-                }}
-                className={activeButton == "Homework Help" && styles.active}
-              >
-                Homework Help
-              </button>
-              <button
-                onClick={() => {
-                  setActiveButton("Test Preparation");
-                }}
-                className={activeButton == "Test Preparation" && styles.active}
-              >
-                Test Preparation
-              </button>
-              <button
-                onClick={() => {
-                  setActiveButton("Concept Review");
-                }}
-                className={activeButton == "Concept Review" && styles.active}
-              >
-                Concept Review
-              </button>
-              <button
-                onClick={() => {
-                  setActiveButton("Practice Problems");
-                }}
-                className={activeButton == "Practice Problems" && styles.active}
-              >
-                Practice Problems
-              </button>
-            </div>
-
-            <div className={styles.dateTimeRow}>
-              <select
-                onChange={(e) => setSelectedDate(e.target.value)}
-                value={selectedDate}
-              >
-                <option value="">Choose an available date</option>
-                {[...new Set(availableSlots.map((s) => s.date))].map(
-                  (uniqueDate, idx) => {
-                    const label = availableSlots.find(
-                      (s) => s.date === uniqueDate
-                    )?.displayLabel;
-                    return (
-                      <option key={idx} value={uniqueDate}>
-                        {label}
-                      </option>
-                    );
-                  }
-                )}
-              </select>
-
-              <select
-                disabled={!selectedDate}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                value={selectedTime}
-              >
-                <option value="">Choose a time slot</option>
-                {availableSlots
-                  .filter((slot) => slot.date === selectedDate)
-                  .map((slot, idx) => (
-                    <option key={idx} value={`${slot.start}-${slot.end}`}>
-                      {slot.start} - {slot.end}
-                    </option>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Help Type</label>
+                <div className={styles.helpTypeGrid}>
+                  {["Homework Help", "Test Preparation", "Concept Review", "Practice Problems"].map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setActiveButton(type)}
+                      className={`${styles.helpTypeBtn} ${activeButton === type ? styles.helpTypeActive : ''}`}
+                    >
+                      {type}
+                    </button>
                   ))}
-              </select>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Select Date & Time</label>
+                <div className={styles.dateTimeContainer}>
+                  <select
+                    className={styles.formSelect}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    value={selectedDate}
+                  >
+                    <option value="">Choose an available date</option>
+                    {[...new Set(availableSlots.map((s) => s.date))].map(
+                      (uniqueDate, idx) => {
+                        const label = availableSlots.find(
+                          (s) => s.date === uniqueDate
+                        )?.displayLabel;
+                        return (
+                          <option key={idx} value={uniqueDate}>
+                            {label}
+                          </option>
+                        );
+                      }
+                    )}
+                  </select>
+
+                  <select
+                    className={styles.formSelect}
+                    disabled={!selectedDate}
+                    onChange={(e) => setSelectedTime(e.target.value)}
+                    value={selectedTime}
+                  >
+                    <option value="">Choose a time slot</option>
+                    {availableSlots
+                      .filter((slot) => slot.date === selectedDate)
+                      .map((slot, idx) => (
+                        <option key={idx} value={`${slot.start}-${slot.end}`}>
+                          {slot.start} - {slot.end}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Student Information</label>
+                <input
+                  type="text"
+                  placeholder="Enter student's full name"
+                  className={styles.formInput}
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                />
+                <input
+                  type="email"
+                  placeholder="Enter contact email"
+                  className={styles.formInput}
+                  value={studentEmail}
+                  onChange={(e) => setStudentEmail(e.target.value)}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Session Notes</label>
+                <textarea
+                  className={styles.formTextarea}
+                  placeholder="Any specific topics, questions, or goals for this session?"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                ></textarea>
+              </div>
+
+              <button className={styles.bookButton} onClick={handleBooking}>
+                <Calendar size={18} /> Book Session Now
+              </button>
             </div>
-
-            <div className={styles.studentInfo}>
-              <input
-                type="text"
-                placeholder="Enter student's full name"
-                value={studentName}
-                onChange={(e) => setStudentName(e.target.value)}
-              />
-
-              <input
-                type="email"
-                placeholder="Enter contact email"
-                value={studentEmail}
-                onChange={(e) => setStudentEmail(e.target.value)}
-              />
-            </div>
-
-            <textarea
-              className={styles.notes}
-              placeholder="Any specific topics, questions, or goals for this session?"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            ></textarea>
-
-           <button className={styles.bookButton} onClick={handleBooking}>
-  Book Session Now
-</button>
           </div>
         </div>
       </div>

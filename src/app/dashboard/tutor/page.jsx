@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styles from '../../../styles/TutorDashboard.module.css';
 import {
   Calendar,
@@ -12,12 +12,61 @@ import {
   TrendingUp,
   MessageSquare,
   Video,
-  Phone
+  Phone,
+  CheckCircle, XCircle
 } from 'lucide-react';
+import { AuthContext } from '@/util/AuthProvider';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getTutorBookingsByTutorId, setBookingApproved } from '@/api/Booking';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 
 const TutorDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const { user } = useContext(AuthContext)
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  const {
+    data: bookings,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["bookings", user.id],
+    queryFn: () => getTutorBookingsByTutorId(user.id),
+    enabled: !!user,
+  });
+
+  const setApprovedMutation = useMutation({
+    mutationFn: (data) => setBookingApproved(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("bookings")
+      alert("changed")
+    },
+    onError: (error) => {
+      alert("there was an error saving")
+    }
+  })
+
+
+  const handleApproveButton = async (id) => {
+    const { data } = await axios.post(`http://localhost:5000/api/rooms/createroom/${id}`)
+    const url = data.roomUrl
+    const dataToSend = {
+      id,
+      roomUrl: url
+    }
+    setApprovedMutation.mutate(dataToSend)
+  }
+
+ const handleGoToRoom = (roomUrl) => {
+  if (!roomUrl) return;
+  const parts = roomUrl.split("/");
+  const roomName = parts[parts.length - 1];
+  router.push(`/video/${roomName}`);
+};
+  console.log("these are bookings", bookings)
 
   const tutorData = {
     name: "Dr. Sarah Johnson",
@@ -71,51 +120,113 @@ const TutorDashboard = () => {
         <div className={styles.sessionsColumn}>
           <div className={styles.card}>
             <div className={styles.cardHeader}>
-              <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Upcoming Sessions</h2>
-              <p className={styles.cardDescription}>Your scheduled tutoring sessions</p>
+              <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Pending Sessions</h2>
+              <p className={styles.cardDescription}>Sessions Awaiting Approval</p>
             </div>
             <div className={styles.cardBody}>
-              {upcomingSessions.map((session) => (
-                <div key={session.id} className={styles.sessionItem}>
-                  <div className={styles.sessionInfo}>
-                    <div className={styles.sessionHeader}>
-                      <div className={styles.sessionIconBox}>
-                        {session.type === 'video' ? (
+              {bookings?.filter((booking) => booking.Status === "Pending").map((booking) => {
+                const sessionDate = new Date(booking.SessionDate);
+                const readableDate = sessionDate.toLocaleDateString(undefined, {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric"
+                });
+
+                const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
+
+                return (
+                  <div key={booking.BookingId} className={styles.sessionItem}>
+                    <div className={styles.sessionInfo}>
+                      <div className={styles.sessionHeader}>
+                        <div className={styles.sessionIconBox}>
                           <Video className={styles.sessionIcon} />
-                        ) : (
-                          <Users className={styles.sessionIcon} />
-                        )}
+                        </div>
+                        <div>
+                          <h3 className={styles.sessionName}>Student #{booking.StudentId}</h3>
+                          <p className={styles.sessionSubject}>{booking.HelpType}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className={styles.sessionName}>{session.student}</h3>
-                        <p className={styles.sessionSubject}>{session.subject}</p>
+                      <div className={styles.sessionMeta}>
+                        <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
+                        <span>Status: <strong>{booking.Status}</strong></span>
                       </div>
                     </div>
-                    <div className={styles.sessionMeta}>
-                      <span><Clock className={styles.metaIcon} /> {session.time} • {session.date}</span>
-                      <span>{session.duration}</span>
+                    <div className={styles.sessionActions}>
+                      <button className={styles.outlineButton}>Message</button>
+                      <button
+                        className={styles.primaryButton}
+                        onClick={() => { handleApproveButton(booking.BookingId) }}
+                      >
+                        <CheckCircle className={styles.buttonIcon} /> Approve
+                      </button>
                     </div>
                   </div>
-                  <div className={styles.sessionActions}>
-                    <button className={styles.outlineButton}><MessageSquare className={styles.buttonIcon} /> Message</button>
-                    <button className={styles.primaryButton}>
-                      {session.type === 'video' ? (
-                        <><Video className={styles.buttonIcon} /> Join</>
-                      ) : (
-                        <><Phone className={styles.buttonIcon} /> Call</>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              ))}
-              <div className={styles.cardFooter}>
-              
-                  <button className={styles.outlineButton}>View Full Calendar</button>
-               
-              </div>
+                );
+              })}
+
+              {bookings?.filter(b => b.Status === "Pending").length === 0 && (
+                <p>No pending sessions.</p>
+              )}
+
+
             </div>
           </div>
+          <br />
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Approved Sessions</h2>
+              <p className={styles.cardDescription}>Confirmed tutoring sessions</p>
+            </div>
+
+            <div className={styles.cardBody}>
+              {bookings?.filter((booking) => booking.Status === "Approved")
+                .map((booking) => {
+                  const sessionDate = new Date(booking.SessionDate);
+                  const readableDate = sessionDate.toLocaleDateString(undefined, {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  });
+
+                  const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
+
+                  return (
+                    <div key={booking.BookingId} className={styles.sessionItem}>
+                      <div className={styles.sessionInfo}>
+                        <div className={styles.sessionHeader}>
+                          <div className={styles.sessionIconBox}>
+                            <Video className={styles.sessionIcon} />
+                          </div>
+                          <div>
+                            <h3 className={styles.sessionName}>Student #{booking.StudentId}</h3>
+                            <p className={styles.sessionSubject}>{booking.HelpType}</p>
+                          </div>
+                        </div>
+                        <div className={styles.sessionMeta}>
+                          <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
+                          <span>Status: <strong>{booking.Status}</strong></span>
+                        </div>
+                      </div>
+                      <div className={styles.sessionActions}>
+                        <button className={styles.outlineButton}>Message</button>
+                        <button className={styles.primaryButton} onClick={() => {handleGoToRoom(booking.RoomURL)}}>
+                          <Video className={styles.buttonIcon} /> Join
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+              {bookings?.filter(b => b.Status === "Approved").length === 0 && (
+                <p>No approved sessions yet.</p>
+              )}
+
+
+            </div>
+          </div>
+
         </div>
+
 
         <div className={styles.sidebarColumn}>
           <div className={styles.card}>

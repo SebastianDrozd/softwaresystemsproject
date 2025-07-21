@@ -17,7 +17,7 @@ const SuccessStories = () => {
                     </p>
                 </div>
                 <div className={styles.successcard}>
-                    <h2 className={styles.successheader}>James' Transformation</h2>
+                    <h2 className={styles.successheader}>James' Story</h2>
                     <p className={styles.successdetails}>
                         "BridgeLearn made it possible for me to get the support I needed without breaking the bank. My grades have never been better!"
                     </p>

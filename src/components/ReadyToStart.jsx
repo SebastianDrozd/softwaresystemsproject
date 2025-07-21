@@ -1,5 +1,8 @@
+"use client"
+import { useRouter } from "next/navigation";
 import styles from "../styles/ReadyToStart.module.css";
 const ReadyToStart = () => {
+  const router = useRouter()
   return (
     <div className={styles.container}>
       <div className={styles.innercontainer}>
@@ -8,10 +11,8 @@ const ReadyToStart = () => {
           Join our community of learners and start your journey today!
         </h5>
         <div className={styles.buttondiv}>
-          <button className={styles.browsebutton}>Browse Tutors</button>
-          <button className={styles.consultationbutton}>
-            Free Consultation
-          </button>
+          <button onClick={() => {router.push("/postings")}} className={styles.browsebutton}>Browse Tutors</button>
+          
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@daily-co/daily-js": "^0.81.0",
     "@tanstack/react-query": "^5.80.7",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",

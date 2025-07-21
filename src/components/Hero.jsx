@@ -20,9 +20,7 @@ const Hero = () => {
         </h5>
         <div className={styles.buttondiv}>
           <button onClick={handleViewPostings} className={styles.browsebutton}>Browse Tutors</button>
-          <button className={styles.consultationbutton}>
-            Free Consultation
-          </button>
+        
         </div>
       </div>
     </div>

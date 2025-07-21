@@ -1,11 +1,26 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styles from '../../../styles/StudentDashboard.module.css';
 import { Search, Calendar, BookOpen, Star, Clock, DollarSign, User, Filter, MessageSquare, Video, Phone, Heart, TrendingUp, CreditCard, Award } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { AuthContext } from '@/util/AuthProvider';
+import { getTutorBookingsByStudentId } from '@/api/Booking';
+import { useRouter } from 'next/navigation';
 
 const BuyerDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
-
+  const { user } = useContext(AuthContext)
+  const router = useRouter()
+  const {
+    data: bookings,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["bookings", user.id],
+    queryFn: () => getTutorBookingsByStudentId(user.id),
+    enabled: !!user,
+  });
+  console.log("these are bookings", bookings)
   const buyerData = {
     name: "Alex Thompson",
     totalSessions: 18,
@@ -31,7 +46,12 @@ const BuyerDashboard = () => {
     { subject: "Physics", percent: 60 },
     { subject: "Chemistry", percent: 45 }
   ];
-
+ const handleGoToRoom = (roomUrl) => {
+  if (!roomUrl) return;
+  const parts = roomUrl.split("/");
+  const roomName = parts[parts.length - 1];
+  router.push(`/video/${roomName}`);
+};
   return (
     <div className={styles.container}>
       <div className={styles.dashboardContent}>
@@ -54,39 +74,112 @@ const BuyerDashboard = () => {
 
         <div className={styles.gridMain}>
           <div className={styles.mainColumn}>
-            <div className={styles.searchSection}>
-              <input
-                className={styles.input}
-                placeholder="Search subjects, tutors..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+         
 
-            <div className={styles.recommendedTutors}>
-              <h3>Recommended for You</h3>
-              {/* Placeholder Tutors */}
-              {["Emily Watson", "David Kim", "Jennifer Liu"].map((name, i) => (
-                <div key={i} className={styles.tutorCard}>
-                  <div className={styles.tutorAvatar}><User /></div>
-                  <div className={styles.tutorDetails}>
-                    <h4>{name}</h4>
-                    <div className={styles.ratingStars}>
-                      <Star /> 4.{9 - i} • ${40 + i * 5}/hr
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          
 
             <div>
-              <h3>Upcoming Sessions</h3>
-              {["Today", "Tomorrow"].map((day, i) => (
-                <div key={i} className={styles.sessionCard}>
-                  <p>{day} with Tutor #{i + 1}</p>
-                  <button>Join</button>
+              <div className={styles.sessionsColumn}>
+                {/* Pending Sessions */}
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Pending Sessions</h2>
+                    <p className={styles.cardDescription}>Sessions Awaiting Tutor Approval</p>
+                  </div>
+                  <div className={styles.cardBody}>
+                    {bookings?.filter(b => b.Status === "Pending").map((booking) => {
+                      const sessionDate = new Date(booking.SessionDate);
+                      const readableDate = sessionDate.toLocaleDateString(undefined, {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric"
+                      });
+
+                      const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
+
+                      return (
+                        <div key={booking.BookingId} className={styles.sessionItem}>
+                          <div className={styles.sessionInfo}>
+                            <div className={styles.sessionHeader}>
+                              <div className={styles.sessionIconBox}>
+                                <Clock className={styles.sessionIcon} />
+                              </div>
+                              <div>
+                                <h3 className={styles.sessionName}>Tutor #{booking.TutorId}</h3>
+                                <p className={styles.sessionSubject}>{booking.HelpType}</p>
+                              </div>
+                            </div>
+                            <div className={styles.sessionMeta}>
+                              <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
+                              <span>Status: <strong>{booking.Status}</strong></span>
+                            </div>
+                          </div>
+                          <div className={styles.sessionActions}>
+                            <button className={styles.outlineButton}>Message</button>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {bookings?.filter(b => b.Status === "Pending").length === 0 && (
+                      <p>No pending sessions.</p>
+                    )}
+                  </div>
                 </div>
-              ))}
+
+           
+
+                {/* Approved Sessions */}
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Approved Sessions</h2>
+                    <p className={styles.cardDescription}>Confirmed tutoring sessions</p>
+                  </div>
+                  <div className={styles.cardBody}>
+                    {bookings?.filter(b => b.Status === "Approved").map((booking) => {
+                      const sessionDate = new Date(booking.SessionDate);
+                      const readableDate = sessionDate.toLocaleDateString(undefined, {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric"
+                      });
+
+                      const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
+
+                      return (
+                        <div key={booking.BookingId} className={styles.sessionItem}>
+                          <div className={styles.sessionInfo}>
+                            <div className={styles.sessionHeader}>
+                              <div className={styles.sessionIconBox}>
+                                <Video className={styles.sessionIcon} />
+                              </div>
+                              <div>
+                                <h3 className={styles.sessionName}>Tutor #{booking.TutorId}</h3>
+                                <p className={styles.sessionSubject}>{booking.HelpType}</p>
+                              </div>
+                            </div>
+                            <div className={styles.sessionMeta}>
+                              <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
+                              <span>Status: <strong>{booking.Status}</strong></span>
+                            </div>
+                          </div>
+                          <div className={styles.sessionActions}>
+                            <button className={styles.outlineButton}>Message</button>
+                            <button className={styles.primaryButton} onClick={() => handleGoToRoom(booking.RoomURL)}>
+                              <Video className={styles.buttonIcon} /> Join
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {bookings?.filter(b => b.Status === "Approved").length === 0 && (
+                      <p>No approved sessions yet.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 

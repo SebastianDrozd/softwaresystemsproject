@@ -162,3 +162,151 @@
   background: linear-gradient(to right, #16a34a, #2563eb);
   border-radius: 9999px;
 }
+.sessionsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.cardHeader {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardDescription {
+  font-size: 0.95rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sessionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e5e5;
+}
+
+.sessionInfo {
+  flex: 1;
+}
+
+.sessionHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.sessionIconBox {
+  background-color: #e0f0ff;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sessionIcon {
+  width: 20px;
+  height: 20px;
+  color: #0070f3;
+}
+
+.sessionName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sessionSubject {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}
+
+.sessionMeta {
+  font-size: 0.85rem;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metaIcon {
+  width: 14px;
+  height: 14px;
+  margin-right: 0.25rem;
+}
+
+.sessionActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.outlineButton {
+  background: transparent;
+  border: 1px solid #0070f3;
+  color: #0070f3;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+}
+
+.outlineButton:hover {
+  background-color: #e6f0ff;
+}
+
+.primaryButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+}
+
+.primaryButton:hover {
+  background-color: #005fd1;
+}
+
+.buttonIcon {
+  width: 16px;
+  height: 16px;
+}
