@@ -112,7 +112,7 @@
 /* Layout */
 .contentGrid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+
   gap: 2rem;
   margin-top: 1rem;
 }
@@ -474,4 +474,20 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+}
+.successmessage {
+  color: #2f855a;
+  font-weight: 500;
+  margin-top: 1rem;
+  text-align: center;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.errorMessage {
+  color: #e53e3e;
+  font-weight: 500;
+  margin-top: 1rem;
+  text-align: center;
+  margin-top: 2em;
+  margin-bottom: 2em;
 }

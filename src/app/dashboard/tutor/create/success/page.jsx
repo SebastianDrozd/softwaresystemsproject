@@ -2,11 +2,13 @@
 import React, { useEffect } from 'react';
 
 import styles from '../../../../../styles/PostSuccess.module.css';
+import { useRouter } from 'next/navigation';
 
 const PostSuccess = () => {
-  
+  const router = useRouter()
 
   // Prevent back navigation
+
 
 
   return (
@@ -16,16 +18,11 @@ const PostSuccess = () => {
         <p className={styles.subtitle}>Your tutoring post is now live and visible to students.</p>
 
         <div className={styles.actions}>
-          <button
-            className={styles.button}
-            onClick={() => navigate('/my-posts')}
-          >
-            View My Post
-          </button>
+         
 
           <button
             className={styles.outlineButton}
-            onClick={() => navigate('/tutor-dashboard')}
+            onClick={() => router.push('/dashboard/tutor')}
           >
             Back to Dashboard
           </button>

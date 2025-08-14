@@ -1,5 +1,5 @@
-.page {
-  background: linear-gradient(to bottom right, #eef4ff, #f5f0ff);
+ .page {
+  background-color: #fafbfc;
   min-height: 100vh;
   padding: 2rem;
 }

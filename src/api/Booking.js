@@ -38,10 +38,40 @@ const setBookingApproved = async (data) => {
     }
 }
 
+const getRecentBookings = async (id) => {
+    try{
+        const bookings = await axios.get(`http://localhost:5000/api/booking/recent/roomurl/${id}`);
+        return bookings.data;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+const setBookingFinished = async (id) => {
+    try {
+        const response = await axios.put(`http://localhost:5000/api/booking/finish/${id}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const getAllFinishedBookings = async (id) => {
+    try{
+        const response = await axios.get(`http://localhost:5000/api/booking/finished/${id}`);
+        return response.data;
+    }catch(error){
+        console.log(error);
+    }
+}
+
 module.exports = {
     createBooking,
     getTutorBookingsByTutorId,
     setBookingApproved,
-    getTutorBookingsByStudentId
+    getTutorBookingsByStudentId,
+    getRecentBookings,
+    setBookingFinished,
+    getAllFinishedBookings
 
 }

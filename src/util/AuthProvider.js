@@ -7,7 +7,8 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter()
-
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/users/me", {
@@ -25,7 +26,7 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/users/logout', {}, {
-        withCredentials: true, // ✅ Must be set to send the cookie
+        withCredentials: true, 
       });
       console.log("logoutresponse",response)
       setUser(null)
@@ -52,16 +53,26 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       setUser(null)
       if(error.response && error.response.status == 404 ){
-        alert("User not found")
+        return 404;
       }
       if(error.response && error.response.status == 401 ){
-        alert("Password Invalid")
+        return 401;
       }
       if(error.response && error.response.status == 500){
-        alert("There was an error signing you in")
+       return 500;
       }
     }
   };
+  const refreshUser = async () => {
+  try {
+    const { data } = await axios.get("http://localhost:5000/api/users/me", { withCredentials: true });
+    setUser(data);
+    return data;
+  } catch {
+    setUser(null);
+    return null;
+  }
+};
 
   if (isLoading) {
     return (
@@ -73,7 +84,7 @@ const AuthProvider = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout,login }}>
+    <AuthContext.Provider value={{ user, setUser, logout,login,refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

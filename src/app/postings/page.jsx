@@ -23,7 +23,7 @@ const Services = () => {
       return (
         (post.FirstName + " " + post.LastName).toLowerCase().includes(searchTerm.toLowerCase()) ||
         post?.subject?.toLowerCase().includes(searchTerm.toLowerCase())
-      ) && (filterSubject ? post.subjects.includes(filterSubject)  : true);
+      ) && (filterSubject ? post.subjects.includes(filterSubject) : true);
     })
     .sort((a, b) => {
       if (sortOption === "rating") return b.rating - a.rating;
@@ -52,7 +52,7 @@ const Services = () => {
             <p className={styles.heroDescription}>
               Connect with verified educators and subject matter experts for personalized learning experiences.
             </p>
-            
+
             <div className={styles.searchContainer}>
               <div className={styles.searchInputWrapper}>
                 <Search className={styles.searchIcon} size={20} />
@@ -64,10 +64,10 @@ const Services = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              
+
               <div className={styles.filtersRow}>
                 <div className={styles.filterGroup}>
-                  <Filter className={styles.filterIcon} size={16} />
+
                   <select
                     className={styles.filterSelect}
                     value={filterSubject}
@@ -77,23 +77,19 @@ const Services = () => {
                     <option value="Math">Mathematics</option>
                     <option value="Science">Science</option>
                     <option value="Language Arts">Language Arts</option>
-                    <option value="Computer Science">Computer Science</option>
                     <option value="History">History</option>
+                    <option value="Geography">Geography</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Psychology">Psychology</option>
+                    <option value="Foreign Languages">Foreign Languages</option>
+                    <option value="Art">Art</option>
+                    <option value="Music">Music</option>
+                    <option value="Business Studies">Business Studies</option>
                   </select>
                 </div>
-                
-                <div className={styles.filterGroup}>
-                  <TrendingUp className={styles.filterIcon} size={16} />
-                  <select
-                    className={styles.sortSelect}
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                  >
-                    <option value="rating">Highest Rated</option>
-                    <option value="price_low">Lowest Price</option>
-                    <option value="price_high">Highest Price</option>
-                  </select>
-                </div>
+
+
               </div>
             </div>
           </div>
@@ -114,48 +110,52 @@ const Services = () => {
               <article key={service.post_id} className={styles.tutorCard}>
                 <div className={styles.cardHeader}>
                   <div className={styles.avatarContainer}>
-                    <Image
-                      src="https://i.ibb.co/7d8WN4Rh/premium-photo-1689568126014-06fea9d5d341.jpg"
-                      alt={`${service.FirstName} ${service.LastName}`}
-                      className={styles.avatar}
-                      width={64}
-                      height={64}
-                    />
+
                     {service.verified && (
                       <div className={styles.verifiedBadge}>
                         <Award size={12} />
                       </div>
                     )}
                   </div>
-                  
+
                   <div className={styles.tutorInfo}>
                     <h3 className={styles.tutorName}>
                       {service.FirstName} {service.LastName}
                     </h3>
-                    <p className={styles.subject}>{service.subject}</p>
-                    <div className={styles.rating}>
-                      <Star className={styles.starIcon} size={14} fill="currentColor" />
-                      <span className={styles.ratingValue}>{service.rating}</span>
-                      <span className={styles.reviewCount}>({service.reviewCount} reviews)</span>
+                    <div className={styles.subjectTags}>
+                      {service.subjects?.split("||").map((subject, index) => (
+                        <span key={index} className={styles.subjectTag}>
+                          {subject + " "}
+                        </span>
+                      ))}
                     </div>
+
                   </div>
                 </div>
 
                 <div className={styles.cardBody}>
                   <p className={styles.description}>{service.PostDescription}</p>
-                  
+
                   <div className={styles.detailsGrid}>
-                    <div className={styles.detail}>
-                      <MapPin className={styles.detailIcon} size={14} />
-                      <span>{service.location}</span>
-                    </div>
-                    <div className={styles.detail}>
-                      <Clock className={styles.detailIcon} size={14} />
-                      <span>{service.availability}</span>
-                    </div>
+
+                   <div className={styles.detail}>
+  <Clock className={styles.detailIcon} size={14} />
+  <div className={styles.availabilityList}>
+    {service.availability?.split("||").map((slot, index) => (
+      <div key={index} className={styles.availabilityItem}>
+        {slot}
+      </div>
+    ))}
+  </div>
+</div>
+
                     <div className={styles.detail}>
                       <GraduationCap className={styles.detailIcon} size={14} />
-                      <span>{service.experience} experience</span>
+                      <span>{service.Experience}</span>
+                    </div>
+                    <div className={styles.detail}>
+                      <Star className={styles.detailIcon} size={14} />
+                      <span>{service.Qualifications}</span>
                     </div>
                   </div>
 
@@ -181,19 +181,16 @@ const Services = () => {
                   <div className={styles.priceContainer}>
                     <span className={styles.price}>${service.HourlyRate}/hr</span>
                   </div>
-                  
+
                   <div className={styles.actionButtons}>
                     <a href={`/postings/${service.post_id}`} className={styles.viewProfileBtn}>
                       View Profile
                     </a>
-                    <a href={`/booking?tutor=${service.id}`} className={styles.bookBtn}>
+                    <a href={`/postings/${service.post_id}/booking`} className={styles.bookBtn}>
                       <Calendar size={14} />
                       Book Session
                     </a>
-                    <button className={styles.messageBtn}>
-                      <MessageCircle size={14} />
-                      Message
-                    </button>
+
                   </div>
                 </div>
               </article>
@@ -207,7 +204,7 @@ const Services = () => {
               <p className={styles.emptyStateText}>
                 Try adjusting your search criteria to find more results.
               </p>
-              <button 
+              <button
                 className={styles.clearFiltersBtn}
                 onClick={() => {
                   setSearchTerm("");

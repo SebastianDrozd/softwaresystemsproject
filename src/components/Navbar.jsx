@@ -47,8 +47,7 @@ const toggleMenu = () => setIsOpen(!isOpen)
   <div className={`${styles.linkcontainer} ${isOpen ? styles.open : ""}`}>
     <ul className={styles.navlinks}>
       <li><a href="/postings">View Posts</a></li>
-      <li><a href="/about">About</a></li>
-      <li><a href="/courses">Reviews</a></li>
+    
       <li>
         {user
           ? <button onClick={handleGoToDashboard}>My Dashboard</button>

@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from "../../styles/SignUpPage.module.css";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "@/util/AuthProvider";
 
 const SignupPage = () => {
   const [fname, setFname] = useState("");
@@ -13,9 +14,28 @@ const SignupPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("student");
   const router = useRouter()
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [hasSuccess, setHasSuccess] = useState(false);
+  const {setUser,refreshUser} = useContext(AuthContext)
   const handleSignup = () => {
+    //if any field is empty, show error message
+    if (!fname || !lname || !email || !password || !confirmPassword) {
+      setHasError(true);
+      setErrorMessage("Please fill in all fields.");
+      //timeout to allow user to read the message
+      setTimeout(() => {
+        setHasError(false);
+      }, 3000);
+      return;
+    } 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+     setHasError(true);
+      setErrorMessage("Passwords do not match. Please try again.");
+      //timeout to allow user to read the message
+      setTimeout(() => {
+        setHasError(false);
+      }, 3000);
       return;
     }
 
@@ -39,30 +59,38 @@ const SignupPage = () => {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("Signup successful:", data.user);
+      const me = await refreshUser();
+      console.log("User after signup:", me);
+      setHasSuccess(true);
+      setTimeout(() => {
+        setHasSuccess(false);
+      }, 2000);
       const user = data.user;
-      alert("Signup successful! Welcome aboard!");
-      if(user.role == "tutor"){
+      if (user.role == "tutor") {
         console.log("user is logged in as tutor")
-         router.push("/dashboard/tutor")
+        router.push("/dashboard/tutor")
       }
-      else if (user.role == "student"){
+      else if (user.role == "student") {
         router.push("/dashboard/student")
       }
-         
-      // Optionally redirect
     },
     onError: (error) => {
-      //check if error code is 409
       if (error.response && error.response.status === 409) {
-        alert("Email already exists. Please use a different email.");
+        setErrorMessage("Email already exists. Please use a different email.");
+        //timeout to allow user to read the message
+        setHasError(true);
+        setTimeout(() => {
+          setHasError(false);
+        }, 3000);
+        console.error("Email already exists:", error);
+        // alert("Email already exists. Please use a different email.");
         return;
       }
       console.error("Signup failed:", error);
       alert("Signup failed. Please try again.");
     },
-    
   });
 
   return (
@@ -144,7 +172,16 @@ const SignupPage = () => {
           <button className={styles.button} onClick={handleSignup}>
             Sign Up
           </button>
-
+          {hasSuccess && (
+            <p className={styles.successMessage}>
+              Signup successful! Welcome aboard!
+            </p>
+          )}
+          {hasError && (
+            <p className={styles.errorMessage}>
+              {errorMessage}
+            </p>
+          )}
           <p className={styles.loginPrompt}>
             Already have an account?{" "}
             <a href="/login" className={styles.link}>
@@ -164,6 +201,7 @@ const SignupPage = () => {
               Contact Support
             </a>
           </p>
+
         </div>
       </div>
     </div>

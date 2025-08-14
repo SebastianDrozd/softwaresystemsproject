@@ -10,10 +10,37 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const router = useRouter()
   const {user,login} = useContext(AuthContext)
-
-  
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const handleLogin = async () => {
-    login(email,password)
+  const code = await login(email,password)
+  console.log("code",code)
+  if(code == 404){
+    setHasError(true);
+    setErrorMessage("User not found. Please check your email.");
+    setTimeout(() => {
+      setHasError(false);
+    }, 3000);
+    return;
+  }
+  if(code == 401){
+    setHasError(true);
+    setErrorMessage("Invalid password. Please try again.");
+    setTimeout(() => {
+      setHasError(false);
+    }
+    , 3000);
+    return;
+  }
+  if(code == 500){
+    setHasError(true);
+    setErrorMessage("There was an error signing you in. Please try again later.");
+    setTimeout(() => {
+      setHasError(false);
+    }, 3000);
+    return;
+  }
+ 
   };
 
   return (
@@ -53,7 +80,11 @@ const LoginPage = () => {
           <button className={styles.button} onClick={handleLogin}>
             Login
           </button>
-
+          {hasError && (
+            <div className={styles.errorMessage}>
+              {errorMessage}
+            </div>
+          )}
           <hr className={styles.divider} />
 
           <p className={styles.signupPrompt}>

@@ -496,3 +496,27 @@
     padding: 2rem 0 1.5rem;
   }
 }
+.subjectTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.subjectTag {
+  background: #e0e7ff;
+  color: #1e3a8a;
+  font-size: 0.8rem;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+.availabilityList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.availabilityItem {
+  font-size: 0.85rem;
+  color: #334155;
+}

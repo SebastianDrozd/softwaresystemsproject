@@ -6,6 +6,7 @@ const getTutorPosts = async () => {
         const response = await axios.get("http://localhost:5000/api/tutorposts");
         return response.data
     }catch(error){
+        console.log("Error fetching tutor posts:", error)
         throw error
     }
 }

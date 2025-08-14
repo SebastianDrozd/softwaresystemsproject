@@ -2,24 +2,92 @@
 import React, { useContext, useState } from 'react';
 import styles from '../../../styles/StudentDashboard.module.css';
 import { Search, Calendar, BookOpen, Star, Clock, DollarSign, User, Filter, MessageSquare, Video, Phone, Heart, TrendingUp, CreditCard, Award } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AuthContext } from '@/util/AuthProvider';
-import { getTutorBookingsByStudentId } from '@/api/Booking';
+import { getRecentBookings, getTutorBookingsByStudentId } from '@/api/Booking';
 import { useRouter } from 'next/navigation';
 
-const BuyerDashboard = () => {
+const StudentDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useContext(AuthContext)
   const router = useRouter()
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const queryClient = useQueryClient();
+  
+const createReviewMutation = useMutation({
+  mutationFn: async (newReview) => {
+    const res = await fetch("http://localhost:5000/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newReview),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to create review");
+    }
+
+    return res.json();
+  },
+  onSuccess: () => {
+    // Refetch reviews so UI updates automatically
+    queryClient.invalidateQueries(["studentReviews", user?.id]);
+    handleCloseReviewModal();
+  },
+});
+
+  const handleOpenReviewModal = (booking) => {
+    setSelectedBooking(booking);
+    setReviewText("");
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedBooking(null);
+  };
+
+  const { data: studentReviews } = useQuery({
+    queryKey: ["studentReviews", user?.id],
+    queryFn: async () => {
+      const res = await fetch(`http://localhost:5000/api/reviews/student/${user?.id}`);
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+ const handleSubmitReview = () => {
+  if (!selectedBooking) return;
+
+  createReviewMutation.mutate({
+    TutorId: selectedBooking.TutorId,
+    StudentId: selectedBooking.StudentId,
+    Description: reviewText,
+  });
+};
   const {
     data: bookings,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["bookings", user.id],
-    queryFn: () => getTutorBookingsByStudentId(user.id),
+    queryKey: ["bookings", user?.id],
+    queryFn: () => getTutorBookingsByStudentId(user?.id),
     enabled: !!user,
   });
+  console.log("these are bookings", bookings)
+
+  const {
+    data: recentBookings,
+    isLoading: isRecentLoading,
+    isError: isRecentError,
+  } = useQuery({
+    queryKey: ["recentBookings", user?.id],
+    queryFn: () => getRecentBookings(user?.id),
+    enabled: !!user,
+  });
+  console.log("these are recent bookings", recentBookings)
+
   console.log("these are bookings", bookings)
   const buyerData = {
     name: "Alex Thompson",
@@ -46,38 +114,23 @@ const BuyerDashboard = () => {
     { subject: "Physics", percent: 60 },
     { subject: "Chemistry", percent: 45 }
   ];
- const handleGoToRoom = (roomUrl) => {
-  if (!roomUrl) return;
-  const parts = roomUrl.split("/");
-  const roomName = parts[parts.length - 1];
-  router.push(`/video/${roomName}`);
-};
+  const handleGoToRoom = (roomUrl) => {
+    if (!roomUrl) return;
+    const parts = roomUrl.split("/");
+    const roomName = parts[parts.length - 1];
+    router.push(`/video/${roomName}`);
+  };
+
+  const handleFindTutors = () => {
+    router.push('/postings');
+  }
   return (
     <div className={styles.container}>
       <div className={styles.dashboardContent}>
-        <div className={styles.gridStats}>
-          {stats.map((stat, i) => (
-            <div key={i} className={styles.statCard}>
-              <div className={styles.cardContent}>
-                <div>
-                  <p className={styles.cardTitle}>{stat.title}</p>
-                  <p className={styles.cardValue}>{stat.value}</p>
-                  <p className={stat.changeType === 'positive' ? styles.cardChangePositive : styles.cardChangeNegative}>
-                    {stat.change} from last month
-                  </p>
-                </div>
-                <div className={styles.cardIconWrapper}><stat.icon /></div>
-              </div>
-            </div>
-          ))}
-        </div>
+
 
         <div className={styles.gridMain}>
           <div className={styles.mainColumn}>
-         
-
-          
-
             <div>
               <div className={styles.sessionsColumn}>
                 {/* Pending Sessions */}
@@ -105,17 +158,14 @@ const BuyerDashboard = () => {
                                 <Clock className={styles.sessionIcon} />
                               </div>
                               <div>
-                                <h3 className={styles.sessionName}>Tutor #{booking.TutorId}</h3>
+                                <h3 className={styles.sessionName}>Tutor:  {booking.FirstName + " " + booking.LastName}</h3>
                                 <p className={styles.sessionSubject}>{booking.HelpType}</p>
                               </div>
                             </div>
                             <div className={styles.sessionMeta}>
                               <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
-                              <span>Status: <strong>{booking.Status}</strong></span>
+                              <strong>{"  " + booking.Status}</strong>
                             </div>
-                          </div>
-                          <div className={styles.sessionActions}>
-                            <button className={styles.outlineButton}>Message</button>
                           </div>
                         </div>
                       );
@@ -127,16 +177,87 @@ const BuyerDashboard = () => {
                   </div>
                 </div>
 
-           
-
                 {/* Approved Sessions */}
                 <div className={styles.card}>
                   <div className={styles.cardHeader}>
-                    <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Approved Sessions</h2>
-                    <p className={styles.cardDescription}>Confirmed tutoring sessions</p>
+                    <div>
+                      <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Approved Sessions</h2>
+                      <p className={styles.cardDescription}>Confirmed tutoring sessions</p>
+                    </div>
+
                   </div>
                   <div className={styles.cardBody}>
-                    {bookings?.filter(b => b.Status === "Approved").map((booking) => {
+                    {bookings
+                      ?.filter(b => b.Status === "Approved")
+                      .map((booking) => {
+                        const sessionDateTime = new Date(`${booking.SessionDate.slice(0, 10)}T${booking.StartTime}`);
+                        const now = new Date();
+
+                        // 1 hour in milliseconds
+                        const oneHour = 60 * 60 * 1000;
+
+                        // Allow join if within 1 hour before OR after start
+                        const canJoin = now >= new Date(sessionDateTime.getTime() - oneHour);
+
+                        const readableDate = sessionDateTime.toLocaleDateString(undefined, {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        });
+
+                        const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
+
+                        return (
+                          <div key={booking.BookingId} className={styles.sessionItem}>
+                            <div className={styles.sessionInfo}>
+                              <div className={styles.sessionHeader}>
+                                <div className={styles.sessionIconBox}>
+                                  <Video className={styles.sessionIcon} />
+                                </div>
+                                <div>
+                                  <h3 className={styles.sessionName}>
+                                    Tutor: {booking.FirstName + " " + booking.LastName}
+                                  </h3>
+                                  <p className={styles.sessionSubject}>{booking.HelpType}</p>
+                                </div>
+                              </div>
+                              <div className={styles.sessionMeta}>
+                                <span>
+                                  <Clock className={styles.metaIcon} /> {timeRange} • {readableDate}
+                                </span>
+                                <span>Status: <strong>{booking.Status}</strong></span>
+                              </div>
+                            </div>
+
+                            {canJoin && (
+                              <div className={styles.sessionActions}>
+                                <button
+                                  className={styles.primaryButton}
+                                  onClick={() => handleGoToRoom(booking.RoomURL)}
+                                >
+                                  <Video className={styles.buttonIcon} /> Join
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    
+
+
+                    {bookings?.filter(b => b.Status === "Approved").length === 0 && (
+                      <p>No approved sessions yet.</p>
+                    )}
+                  </div>
+                </div>
+                {/* Completed  Sessions  Need to also add button to leave*/}
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Completed Sessions</h2>
+                    <p className={styles.cardDescription}>Sessions that you have completed with tutors</p>
+                  </div>
+                  <div className={styles.cardBody}>
+                    {bookings?.filter(b => b.Status === "Finished").map((booking) => {
                       const sessionDate = new Date(booking.SessionDate);
                       const readableDate = sessionDate.toLocaleDateString(undefined, {
                         weekday: "short",
@@ -146,77 +267,98 @@ const BuyerDashboard = () => {
 
                       const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
 
+                      const alreadyReviewed = studentReviews?.some(
+                        review => review.TutorId === booking.TutorId // or BookingId if reviews are per booking
+                      );
+
                       return (
                         <div key={booking.BookingId} className={styles.sessionItem}>
                           <div className={styles.sessionInfo}>
                             <div className={styles.sessionHeader}>
                               <div className={styles.sessionIconBox}>
-                                <Video className={styles.sessionIcon} />
+                                <Clock className={styles.sessionIcon} />
                               </div>
                               <div>
-                                <h3 className={styles.sessionName}>Tutor #{booking.TutorId}</h3>
+                                <h3 className={styles.sessionName}>
+                                  Tutor: {booking.FirstName + " " + booking.LastName}
+                                </h3>
                                 <p className={styles.sessionSubject}>{booking.HelpType}</p>
                               </div>
                             </div>
                             <div className={styles.sessionMeta}>
                               <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
-                              <span>Status: <strong>{booking.Status}</strong></span>
                             </div>
                           </div>
-                          <div className={styles.sessionActions}>
-                            <button className={styles.outlineButton}>Message</button>
-                            <button className={styles.primaryButton} onClick={() => handleGoToRoom(booking.RoomURL)}>
-                              <Video className={styles.buttonIcon} /> Join
-                            </button>
-                          </div>
+
+                          {!alreadyReviewed && (
+                            <div className={styles.sessionActions}>
+                              <button
+                                className={styles.primaryButton}
+                                onClick={() => handleOpenReviewModal(booking)}
+                              >
+                                Leave a Review
+                              </button>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
+                   
 
-                    {bookings?.filter(b => b.Status === "Approved").length === 0 && (
-                      <p>No approved sessions yet.</p>
+
+                    {bookings?.filter(b => b.Status === "Finished").length === 0 && (
+                      <p>No finished sessions.</p>
                     )}
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
 
           <div className={styles.sidebar}>
             <div className={styles.quickActions}>
-              <button>Book Session</button>
-              <button>Find Tutors</button>
-              <button>View Progress</button>
-              <button>Payment History</button>
+              <h3>Quick Actions</h3>
+              <button onClick={handleFindTutors}>Find Tutors</button>
+
             </div>
 
-            <div>
+            <div className={styles.card}>
               <h3>Recent Sessions</h3>
-              {recentSessions.map((s) => (
-                <div key={s.id} className={styles.sessionCard}>
-                  <p>{s.subject} - {s.tutor}</p>
-                  <p>{s.date}</p>
+              {recentBookings?.map((s) => (
+                <div key={s.BookingId} className={styles.sessionCard}>
+                  <p>{s.HelpType}</p>
+                  <br />
+                  <p>{s.FirstName + " " + s.LastName + "    " + new Date(s.SessionDate).toLocaleDateString()}  </p>
+
                 </div>
               ))}
             </div>
 
-            <div className={styles.learningProgress}>
-              <h3>Learning Progress</h3>
-              {progress.map((p, i) => (
-                <div key={i}>
-                  <p>{p.subject}</p>
-                  <div className={styles.progressWrapper}>
-                    <div className={styles.progressBar} style={{ width: `${p.percent}%` }}></div>
-                  </div>
-                </div>
-              ))}
-            </div>
+
           </div>
         </div>
       </div>
+      {isReviewModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h3>Leave a Review for {selectedBooking?.FirstName} {selectedBooking?.LastName}</h3>
+            <textarea
+              className={styles.reviewTextarea}
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              placeholder="Write your review..."
+            />
+            <div className={styles.modalActions}>
+              <button onClick={handleSubmitReview} className={styles.primaryButton}>Submit</button>
+              <button onClick={handleCloseReviewModal} className={styles.secondaryButton}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+
   );
 };
 
-export default BuyerDashboard;
+export default StudentDashboard;

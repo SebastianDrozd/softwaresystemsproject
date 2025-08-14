@@ -23,7 +23,8 @@ export default function BookingPage() {
   const [studentName, setStudentName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
   const [notes, setNotes] = useState("");
-  
+  const [hasSucceeded, setHasSucceeded] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const {
     data: post,
     isLoading,
@@ -42,8 +43,12 @@ export default function BookingPage() {
   }, [post]);
 
   const handleBooking = async () => {
-    if (!selectedDate || !selectedTime || !studentName || !studentEmail) {
-      alert("Please fill out all required fields.");
+    if (!selectedDate || !selectedTime ) {
+      setHasError(true);
+      //set timeout
+      setTimeout(() => {
+        setHasError(false);
+      }, 3000);
       return;
     }
 
@@ -69,7 +74,12 @@ export default function BookingPage() {
   const createBookingMutation = useMutation({
     mutationFn: (data) => createBooking(data),
     onSuccess: () => {
-      alert("Booking Completed!");
+      setHasSucceeded(true);
+      //set timeout for message
+      setTimeout(() => {
+        setHasSucceeded(false);
+        router.push(`/dashboard/student`); // Redirect to the post page after booking
+      }, 3000);
     },
     onError: (err) => {
       alert("There was an error creating the booking");
@@ -112,71 +122,7 @@ export default function BookingPage() {
         </div>
 
         <div className={styles.contentGrid}>
-          <div className={styles.leftColumn}>
-            <div className={styles.card}>
-              <div className={styles.tutorHeader}>
-                <div className={styles.avatarContainer}>
-                  <div className={styles.avatar}></div>
-                </div>
-                <div className={styles.tutorInfo}>
-                  <h2 className={styles.tutorName}>{post?.FirstName} {post?.LastName}</h2>
-                  <p className={styles.tutorTitle}>{post?.PostTitle}</p>
-                  
-                  <div className={styles.ratingContainer}>
-                    <div className={styles.rating}>
-                      <span className={styles.starIcon}>★</span>
-                      <span className={styles.ratingValue}>4.9</span>
-                      <span className={styles.reviewCount}>(47 reviews)</span>
-                    </div>
-                    <div className={styles.priceTag}>${post?.HourlyRate}/hour</div>
-                  </div>
-                </div>
-              </div>
-              
-              <p className={styles.description}>{post?.PostDescription}</p>
-              
-              <div className={styles.quickInfo}>
-                <div className={styles.infoItem}>
-                  <MapPin size={16} className={styles.infoIcon} />
-                  <span>Downtown Library</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <Clock size={16} className={styles.infoIcon} />
-                  <span>Usually responds within 2 hours</span>
-                </div>
-              </div>
-              
-              <div className={styles.stats}>
-                <div className={styles.statItem}>
-                  <strong>156</strong>
-                  <span>Students Taught</span>
-                </div>
-                <div className={styles.statItem}>
-                  <strong>98%</strong>
-                  <span>Success Rate</span>
-                </div>
-                <div className={styles.statItem}>
-                  <strong>{post?.Experience}</strong>
-                  <span>Experience</span>
-                </div>
-              </div>
-              
-              <div className={styles.subjectTags}>
-                {post?.subjects?.split("||").map((subject, index) => (
-                  <span key={index} className={styles.subjectTag}>{subject}</span>
-                ))}
-              </div>
-              
-              <div className={styles.contactActions}>
-                <button className={styles.contactButton}>
-                  <MessageCircle size={16} /> Message
-                </button>
-                <button className={styles.contactButton}>
-                  <Phone size={16} /> Call
-                </button>
-              </div>
-            </div>
-          </div>
+        
 
           <div className={styles.rightColumn}>
             <div className={styles.sidebarCard}>
@@ -240,25 +186,6 @@ export default function BookingPage() {
                   </select>
                 </div>
               </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Student Information</label>
-                <input
-                  type="text"
-                  placeholder="Enter student's full name"
-                  className={styles.formInput}
-                  value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
-                />
-                <input
-                  type="email"
-                  placeholder="Enter contact email"
-                  className={styles.formInput}
-                  value={studentEmail}
-                  onChange={(e) => setStudentEmail(e.target.value)}
-                />
-              </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Session Notes</label>
                 <textarea
@@ -268,7 +195,8 @@ export default function BookingPage() {
                   onChange={(e) => setNotes(e.target.value)}
                 ></textarea>
               </div>
-
+              {hasError && <p className={styles.errorMessage}>Please fill in all required fields.</p>}
+              {hasSucceeded && <p className={styles.successmessage}>You have successfully booked your session!</p>}
               <button className={styles.bookButton} onClick={handleBooking}>
                 <Calendar size={18} /> Book Session Now
               </button>
