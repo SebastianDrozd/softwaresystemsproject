@@ -1,4 +1,4 @@
- import styles from "../styles/Footer.module.css";
+import styles from "../styles/Footer.module.css";
 const Footer = () => {
     return (
         <div className={styles.container}>
@@ -10,7 +10,7 @@ const Footer = () => {
                             Empowering students through personalized tutoring and mentorship.
                         </p>
                     </div>
-                     <div className={styles.flexitem}>
+                    <div className={styles.flexitem}>
                         <h3 className={styles.footerheader}>Services</h3>
                         <div className={styles.footercolumn}>
                             <p className={styles.footertext}>Math Tutoring</p>
@@ -19,7 +19,7 @@ const Footer = () => {
                             <p className={styles.footertext}>Test Prep</p>
                         </div>
                     </div>
-                     <div className={styles.flexitem}>
+                    <div className={styles.flexitem}>
                         <h3 className={styles.footerheader}>Support</h3>
                         <div className={styles.footercolumn}>
                             <p className={styles.footertext}>Contact Us</p>
@@ -28,7 +28,7 @@ const Footer = () => {
                             <p className={styles.footertext}>Terms of Service</p>
                         </div>
                     </div>
-                      <div className={styles.flexitem}>
+                    <div className={styles.flexitem}>
                         <h3 className={styles.footerheader}>Contact</h3>
                         <div className={styles.footercolumn}>
                             <p className={styles.footertext}>Phone : (123) 456-7890</p>

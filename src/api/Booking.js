@@ -28,7 +28,6 @@ const getTutorBookingsByStudentId = async (id) => {
 }
 
 const setBookingApproved = async (data) => {
-    console.log("this is data",data)
     try{
         const response = await axios.post(`http://localhost:5000/api/booking/approve`,data)
         return response.data

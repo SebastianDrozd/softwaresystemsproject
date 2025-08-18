@@ -12,7 +12,7 @@ const getTutorPosts = async () => {
 }
 
 const getTutorPostById = async (id) => {
-    console.log("this is id",id)
+  
        try{
         const response = await axios.get(`http://localhost:5000/api/tutorposts/${id}`);
         console.log("this is responsedata",response.data)
@@ -28,7 +28,6 @@ const getTutorPostById = async (id) => {
 
 
 const createTutorPost = async (post) => {
-    console.log("posthit")
     try{
         const response = await axios.post("http://localhost:5000/api/tutorposts",{post})
         return response.data

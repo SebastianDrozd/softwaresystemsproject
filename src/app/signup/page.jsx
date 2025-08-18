@@ -17,22 +17,19 @@ const SignupPage = () => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [hasSuccess, setHasSuccess] = useState(false);
-  const {setUser,refreshUser} = useContext(AuthContext)
+  const { setUser, refreshUser } = useContext(AuthContext)
   const handleSignup = () => {
-    //if any field is empty, show error message
     if (!fname || !lname || !email || !password || !confirmPassword) {
       setHasError(true);
       setErrorMessage("Please fill in all fields.");
-      //timeout to allow user to read the message
       setTimeout(() => {
         setHasError(false);
       }, 3000);
       return;
-    } 
+    }
     if (password !== confirmPassword) {
-     setHasError(true);
+      setHasError(true);
       setErrorMessage("Passwords do not match. Please try again.");
-      //timeout to allow user to read the message
       setTimeout(() => {
         setHasError(false);
       }, 3000);
@@ -60,9 +57,7 @@ const SignupPage = () => {
       return response.data;
     },
     onSuccess: async (data) => {
-      console.log("Signup successful:", data.user);
       const me = await refreshUser();
-      console.log("User after signup:", me);
       setHasSuccess(true);
       setTimeout(() => {
         setHasSuccess(false);
@@ -79,13 +74,11 @@ const SignupPage = () => {
     onError: (error) => {
       if (error.response && error.response.status === 409) {
         setErrorMessage("Email already exists. Please use a different email.");
-        //timeout to allow user to read the message
         setHasError(true);
         setTimeout(() => {
           setHasError(false);
         }, 3000);
         console.error("Email already exists:", error);
-        // alert("Email already exists. Please use a different email.");
         return;
       }
       console.error("Signup failed:", error);

@@ -4,16 +4,10 @@ import styles from '../../../styles/TutorDashboard.module.css';
 import {
   Calendar,
   Clock,
-  DollarSign,
   Users,
-  Star,
-  Settings,
   BookOpen,
-  TrendingUp,
-  MessageSquare,
   Video,
-  Phone,
-  CheckCircle, XCircle
+  CheckCircle
 } from 'lucide-react';
 import { AuthContext } from '@/util/AuthProvider';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -22,7 +16,6 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 const TutorDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
   const { user } = useContext(AuthContext)
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -65,7 +58,6 @@ const TutorDashboard = () => {
     mutationFn: (data) => setBookingApproved(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries("bookings")
-      alert("changed")
     },
     onError: (error) => {
       alert("there was an error saving")
@@ -93,34 +85,14 @@ const TutorDashboard = () => {
     router.push("/dashboard/tutor/create")
   }
 
-  const tutorData = {
-    name: "Dr. Sarah Johnson",
-    rating: 4.9,
-    totalStudents: 45,
-    monthlyEarnings: 2850,
-    completedSessions: 127,
-    subjects: ["Mathematics", "Physics", "Chemistry"]
-  };
 
-  const recentMessages = [
-    { id: 1, student: "Alice Johnson", message: "Can we reschedule tomorrow's session?", time: "2 hours ago", unread: true },
-    { id: 2, student: "Bob Wilson", message: "Thank you for the great session!", time: "5 hours ago", unread: false }
-  ];
 
-  const stats = [
-    { title: "Monthly Earnings", value: `$${tutorData.monthlyEarnings}`, icon: DollarSign, change: "+12%", changeType: "positive" },
-    { title: "Active Students", value: tutorData.totalStudents, icon: Users, change: "+3", changeType: "positive" },
-    { title: "Sessions This Month", value: "24", icon: BookOpen, change: "+8%", changeType: "positive" },
-    { title: "Average Rating", value: tutorData.rating, icon: Star, change: "+0.1", changeType: "positive" }
-  ];
 
   return (
     <div className={styles.container}>
       <div className={styles.dashboardContent}>
         <div className={styles.gridStats}>
-
         </div>
-
         <div className={styles.gridMain}>
           <div className={styles.mainColumn}>
             <div className={styles.card}>
@@ -174,7 +146,6 @@ const TutorDashboard = () => {
                 )}
               </div>
             </div>
-
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>
@@ -188,8 +159,11 @@ const TutorDashboard = () => {
               <div className={styles.cardBody}>
                 {bookings?.filter((booking) => booking.Status === "Approved")
                   .map((booking) => {
-                    const sessionDate = new Date(booking.SessionDate);
-                    const readableDate = sessionDate.toLocaleDateString(undefined, {
+                    const sessionDateTime = new Date(`${booking.SessionDate.slice(0, 10)}T${booking.StartTime}`);
+                    const now = new Date();
+                    const oneHour = 60 * 60 * 1000;
+                    const canJoin = now >= new Date(sessionDateTime.getTime() - oneHour);
+                    const readableDate = sessionDateTime.toLocaleDateString(undefined, {
                       weekday: "short",
                       month: "short",
                       day: "numeric",
@@ -211,38 +185,30 @@ const TutorDashboard = () => {
                           </div>
                           <div className={styles.sessionMeta}>
                             <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
-                         
+                
                           </div>
                         </div>
+
                         <div className={styles.sessionActions}>
-
-                          {(() => {
-                            const now = new Date();
-                            const startDateTime = new Date(`${booking.SessionDate}T${booking.StartTime}`);
-
-                            // Calculate the time difference in milliseconds
-                            const diffMs = startDateTime - now;
-                            const oneHourMs = 60 * 60 * 1000;
-
-                            // Show if we're within 1 hour before start or any time after start
-                            if (diffMs <= oneHourMs) {
-                              return (
-                                <button
-                                  className={styles.primaryButton}
-                                  onClick={() => { handleGoToRoom(booking.RoomURL) }}
-                                >
-                                  <Video className={styles.buttonIcon} /> Join
-                                </button>
-                              );
-                            }
-                            return null;
-                          })()}
-
-                          <button onClick={() => { handleFinishSession(booking.BookingId) }} className={styles.outlineButtonFinish}>Finish Session</button>
+                          {canJoin && (
+                            <button
+                              className={styles.primaryButton}
+                              onClick={() => { handleGoToRoom(booking.RoomURL) }}
+                            >
+                              <Video className={styles.buttonIcon} /> Join
+                            </button>
+                          )}
+                          <button
+                            onClick={() => { handleFinishSession(booking.BookingId) }}
+                            className={styles.outlineButtonFinish}
+                          >
+                            Finish Session
+                          </button>
                         </div>
                       </div>
                     );
                   })}
+
 
                 {bookings?.filter(b => b.Status === "Approved").length === 0 && (
                   <p>No approved sessions yet.</p>
@@ -279,7 +245,7 @@ const TutorDashboard = () => {
                         </div>
                         <div className={styles.sessionMeta}>
                           <span><Clock className={styles.metaIcon} /> {timeRange} • {readableDate}</span>
-                      
+
                         </div>
                       </div>
                     </div>

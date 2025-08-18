@@ -7,8 +7,6 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter()
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/users/me", {
@@ -30,7 +28,7 @@ const AuthProvider = ({ children }) => {
       });
       console.log("logoutresponse",response)
       setUser(null)
-      router.push('/login'); // redirect to login
+      router.push('/login'); 
     } catch (err) {
       console.error('Logout failed:', err);
     }
@@ -77,7 +75,7 @@ const AuthProvider = ({ children }) => {
   if (isLoading) {
     return (
       <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span>Loading...</span> {/* Replace with spinner component if you have one */}
+        <span>Loading...</span> 
       </div>
     );
   }

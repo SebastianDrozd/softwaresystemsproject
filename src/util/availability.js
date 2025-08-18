@@ -12,9 +12,9 @@ export function generateUpcomingSlots(availability, daysAhead = 14) {
 
   for (let i = 0; i <= daysAhead; i++) {
     const futureDate = addDays(today, i);
-    const dayName = format(futureDate, "EEEE"); // "Thursday"
-    const dateStr = format(futureDate, "yyyy-MM-dd"); // "2025-07-18"
-    const displayLabel = format(futureDate, "EEEE M/d/yy"); // "Thursday 7/18/25"
+    const dayName = format(futureDate, "EEEE"); 
+    const dateStr = format(futureDate, "yyyy-MM-dd"); 
+    const displayLabel = format(futureDate, "EEEE M/d/yy"); 
 
     parsed.forEach(entry => {
       const [availDay, range] = entry.split(" ");

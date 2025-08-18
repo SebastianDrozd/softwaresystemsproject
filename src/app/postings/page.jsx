@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import styles from "../../styles/Services.module.css";
-import { Award, Calendar, Clock, GraduationCap, MapPin, MessageCircle, Star, Search, Filter, TrendingUp } from "lucide-react";
+import { Award, Calendar, Clock, GraduationCap, Star, Search } from "lucide-react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getTutorPosts } from "@/api/TutorPosts";
@@ -138,16 +138,16 @@ const Services = () => {
 
                   <div className={styles.detailsGrid}>
 
-                   <div className={styles.detail}>
-  <Clock className={styles.detailIcon} size={14} />
-  <div className={styles.availabilityList}>
-    {service.availability?.split("||").map((slot, index) => (
-      <div key={index} className={styles.availabilityItem}>
-        {slot}
-      </div>
-    ))}
-  </div>
-</div>
+                    <div className={styles.detail}>
+                      <Clock className={styles.detailIcon} size={14} />
+                      <div className={styles.availabilityList}>
+                        {service.availability?.split("||").map((slot, index) => (
+                          <div key={index} className={styles.availabilityItem}>
+                            {slot}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
                     <div className={styles.detail}>
                       <GraduationCap className={styles.detailIcon} size={14} />

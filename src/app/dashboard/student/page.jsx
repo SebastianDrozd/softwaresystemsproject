@@ -1,14 +1,14 @@
 "use client"
 import React, { useContext, useState } from 'react';
 import styles from '../../../styles/StudentDashboard.module.css';
-import { Search, Calendar, BookOpen, Star, Clock, DollarSign, User, Filter, MessageSquare, Video, Phone, Heart, TrendingUp, CreditCard, Award } from 'lucide-react';
+import { Calendar,  Clock,  Video} from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AuthContext } from '@/util/AuthProvider';
 import { getRecentBookings, getTutorBookingsByStudentId } from '@/api/Booking';
 import { useRouter } from 'next/navigation';
 
 const StudentDashboard = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+ 
   const { user } = useContext(AuthContext)
   const router = useRouter()
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -31,7 +31,7 @@ const createReviewMutation = useMutation({
     return res.json();
   },
   onSuccess: () => {
-    // Refetch reviews so UI updates automatically
+    
     queryClient.invalidateQueries(["studentReviews", user?.id]);
     handleCloseReviewModal();
   },
@@ -68,8 +68,7 @@ const createReviewMutation = useMutation({
 };
   const {
     data: bookings,
-    isLoading,
-    isError,
+
   } = useQuery({
     queryKey: ["bookings", user?.id],
     queryFn: () => getTutorBookingsByStudentId(user?.id),
@@ -79,41 +78,15 @@ const createReviewMutation = useMutation({
 
   const {
     data: recentBookings,
-    isLoading: isRecentLoading,
-    isError: isRecentError,
+   
   } = useQuery({
     queryKey: ["recentBookings", user?.id],
     queryFn: () => getRecentBookings(user?.id),
     enabled: !!user,
   });
-  console.log("these are recent bookings", recentBookings)
 
-  console.log("these are bookings", bookings)
-  const buyerData = {
-    name: "Alex Thompson",
-    totalSessions: 18,
-    monthlySpending: 420,
-    favoriteTutors: 3,
-    upcomingSessions: 2
-  };
 
-  const stats = [
-    { title: "Sessions This Month", value: "6", icon: BookOpen, change: "+2", changeType: "positive" },
-    { title: "Hours Learned", value: "24", icon: Clock, change: "+8", changeType: "positive" },
-    { title: "Monthly Spending", value: `$${buyerData.monthlySpending}`, icon: DollarSign, change: "-$50", changeType: "negative" },
-    { title: "Favorite Tutors", value: buyerData.favoriteTutors, icon: Heart, change: "+1", changeType: "positive" }
-  ];
 
-  const recentSessions = [
-    { id: 1, tutor: "Dr. Sarah Johnson", subject: "Calculus", date: "Yesterday", rating: 5, status: "completed" },
-    { id: 2, tutor: "Prof. Michael Chen", subject: "Physics", date: "3 days ago", rating: 4, status: "completed" }
-  ];
-
-  const progress = [
-    { subject: "Mathematics", percent: 75 },
-    { subject: "Physics", percent: 60 },
-    { subject: "Chemistry", percent: 45 }
-  ];
   const handleGoToRoom = (roomUrl) => {
     if (!roomUrl) return;
     const parts = roomUrl.split("/");
@@ -133,7 +106,7 @@ const createReviewMutation = useMutation({
           <div className={styles.mainColumn}>
             <div>
               <div className={styles.sessionsColumn}>
-                {/* Pending Sessions */}
+        
                 <div className={styles.card}>
                   <div className={styles.cardHeader}>
                     <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Pending Sessions</h2>
@@ -192,13 +165,8 @@ const createReviewMutation = useMutation({
                       .map((booking) => {
                         const sessionDateTime = new Date(`${booking.SessionDate.slice(0, 10)}T${booking.StartTime}`);
                         const now = new Date();
-
-                        // 1 hour in milliseconds
                         const oneHour = 60 * 60 * 1000;
-
-                        // Allow join if within 1 hour before OR after start
                         const canJoin = now >= new Date(sessionDateTime.getTime() - oneHour);
-
                         const readableDate = sessionDateTime.toLocaleDateString(undefined, {
                           weekday: "short",
                           month: "short",
@@ -250,7 +218,6 @@ const createReviewMutation = useMutation({
                     )}
                   </div>
                 </div>
-                {/* Completed  Sessions  Need to also add button to leave*/}
                 <div className={styles.card}>
                   <div className={styles.cardHeader}>
                     <h2 className={styles.cardTitle}><Calendar className={styles.cardIcon} /> Completed Sessions</h2>
@@ -268,7 +235,7 @@ const createReviewMutation = useMutation({
                       const timeRange = `${booking.StartTime.slice(0, 5)} - ${booking.EndTime.slice(0, 5)}`;
 
                       const alreadyReviewed = studentReviews?.some(
-                        review => review.TutorId === booking.TutorId // or BookingId if reviews are per booking
+                        review => review.TutorId === booking.TutorId 
                       );
 
                       return (
@@ -303,9 +270,7 @@ const createReviewMutation = useMutation({
                         </div>
                       );
                     })}
-                   
-
-
+                  
                     {bookings?.filter(b => b.Status === "Finished").length === 0 && (
                       <p>No finished sessions.</p>
                     )}
@@ -333,8 +298,6 @@ const createReviewMutation = useMutation({
                 </div>
               ))}
             </div>
-
-
           </div>
         </div>
       </div>

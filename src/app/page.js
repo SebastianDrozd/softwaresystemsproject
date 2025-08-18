@@ -10,14 +10,14 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-   <div className={styles.container}>
-    <Hero/>
-    <CenterSection/>
-    <TutoringServicesDisplay/>
-    <MissionStatement/>
-    <SuccessStories/>
-    <ReadyToStart/>
-    <Footer/>
-   </div>
+    <div className={styles.container}>
+      <Hero />
+      <CenterSection />
+      <TutoringServicesDisplay />
+      <MissionStatement />
+      <SuccessStories />
+      <ReadyToStart />
+      <Footer />
+    </div>
   );
 }

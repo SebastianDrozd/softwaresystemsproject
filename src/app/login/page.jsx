@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const handleLogin = async () => {
   const code = await login(email,password)
-  console.log("code",code)
+
   if(code == 404){
     setHasError(true);
     setErrorMessage("User not found. Please check your email.");

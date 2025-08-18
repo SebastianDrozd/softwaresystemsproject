@@ -6,11 +6,6 @@ import { useRouter } from 'next/navigation';
 
 const PostSuccess = () => {
   const router = useRouter()
-
-  // Prevent back navigation
-
-
-
   return (
     <div className={styles.page}>
       <div className={styles.card}>

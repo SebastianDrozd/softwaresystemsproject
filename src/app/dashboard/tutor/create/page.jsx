@@ -92,7 +92,6 @@ const CreateTutoringPost = () => {
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.hourlyRate) newErrors.hourlyRate = 'Hourly rate is required';
     if (formData.availability.length == 0) newErrors.availability = 'Availability is required';
-    //  if (formData.subjects.some(s => !s.trim())) newErrors.subjects = 'All subjects must be selected';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -105,7 +104,6 @@ const CreateTutoringPost = () => {
     onError: (err) => {
       alert("There was an error creating the post");
       setHasError(true);
-      //set timeout
       setTimeout(() => {
         setHasError(false);
       }, 3000);
@@ -118,14 +116,13 @@ const CreateTutoringPost = () => {
     if (!validateForm()) return;
     console.log('Form submitted:', formData);
     createPostMutation.mutate({ ...formData, tutor: user.id })
-    // navigate('/tutor-dashboard');
   };
 
 
   return (
     <div className={styles.page}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        {/* BASIC INFORMATION */}
+
         <section className={styles.card}>
           <h2 className={styles.cardTitle}>Basic Information</h2>
 

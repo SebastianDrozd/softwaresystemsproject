@@ -9,7 +9,7 @@ import { generateUpcomingSlots } from "@/util/availability";
 import { createBooking } from "@/api/Booking";
 import { AuthContext } from "@/util/AuthProvider";
 import styles from "../../../../styles/BookingPage.module.css";
-import { ArrowLeft, MessageCircle, Phone, Calendar, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, Calendar} from "lucide-react";
 
 export default function BookingPage() {
   const [activeButton, setActiveButton] = useState("Homework Help");
@@ -75,10 +75,9 @@ export default function BookingPage() {
     mutationFn: (data) => createBooking(data),
     onSuccess: () => {
       setHasSucceeded(true);
-      //set timeout for message
       setTimeout(() => {
         setHasSucceeded(false);
-        router.push(`/dashboard/student`); // Redirect to the post page after booking
+        router.push(`/dashboard/student`); 
       }, 3000);
     },
     onError: (err) => {

@@ -6,11 +6,7 @@ import { getTutorPostById } from '@/api/TutorPosts'
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useRouter } from 'next/navigation'
 import styles from '../../../styles/TutorPost.module.css';
-import {
-  Star, MapPin, Clock, Calendar, MessageCircle, Phone, Award,
-  BookOpen, GraduationCap, Users, CheckCircle, ArrowLeft,
-  Video, Home
-} from 'lucide-react';
+import {Calendar,CheckCircle, ArrowLeft} from 'lucide-react';
 import { getReviewsByTutorId } from '@/api/Reviews';
 
 const TutorPost = () => {
@@ -25,59 +21,26 @@ const TutorPost = () => {
     enabled: !!id
   })
   const availabilitySlots = post?.availability
-    ?.split("||") // split into each day/time entry
+    ?.split("||") // 
     .map(entry => {
       const [day, timeRange] = entry.split(" ");
       const [start, end] = timeRange.split("-");
       return {
         day,
-        start: start.slice(0, 5), // keep HH:MM
+        start: start.slice(0, 5), 
         end: end.slice(0, 5)
       };
     }) || [];
-  //GET reviews
+ 
   const { data: reviews } = useQuery({
     queryKey: ['reviews', id],
     queryFn: () => getReviewsByTutorId(post?.user_id),
     enabled: !!post
   });
-  console.log("these are reviews", reviews)
   const handleGoToBooking = () => {
     router.push(`/postings/${id}/booking`)
   }
 
-  // Mock data - replace with actual data when available
-  const tutor = {
-    id: 1,
-    name: "Sarah Johnson",
-    title: "Expert Mathematics Tutor - All Levels",
-    subjects: ["Mathematics", "Algebra", "Geometry", "Calculus"],
-    description: "Experienced math tutor...",
-    longDescription: "With over 5 years of tutoring experience, I specialize in helping students overcome math anxiety and achieve their academic goals. My approach focuses on building strong foundations and developing problem-solving confidence.",
-    price: 12,
-    location: "Downtown Library",
-    availability: "Mon, Wed, Fri 3-6 PM",
-    rating: 4.9,
-    reviewCount: 47,
-    totalStudents: 156,
-    completedSessions: 340,
-    experience: "5 years",
-    education: "Master's in Mathematics Education",
-    specialties: ["Algebra", "Geometry", "Calculus", "SAT Prep"],
-    verified: true,
-    responseTime: "2 hours",
-    sessionTypes: ["In-Person", "Online"],
-    languages: ["English", "Spanish"],
-    profileImage: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=300&h=300&fit=crop&crop=face",
-    achievements: ["Certified Math Tutor", "95% Student Success Rate", "Top Rated Tutor 2023"]
-  };
-
-
-  const availableSlots = [
-    { day: "Monday", times: ["3:00 PM", "4:00 PM", "5:00 PM"] },
-    { day: "Wednesday", times: ["3:00 PM", "4:00 PM", "5:00 PM"] },
-    { day: "Friday", times: ["3:00 PM", "4:00 PM", "5:00 PM"] }
-  ];
 
   if (isLoading) {
     return (
@@ -206,7 +169,7 @@ const TutorPost = () => {
           <div className={styles.rightColumn}>
             <div className={styles.sidebarCard}>
               <div className={styles.priceSection}>
-                <span className={styles.price}>${tutor.price}</span>
+                <span className={styles.price}>${post?.HourlyRate}</span>
                 <span className={styles.priceUnit}>/hour</span>
               </div>
 
